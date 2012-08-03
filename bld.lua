@@ -50,6 +50,14 @@ function rule(target, sources, transformation, parameters, check)
 end
 
 
+function pkg_config(pkg_name)
+	local cflags = "-I /usr"
+	local ldflags = "-L /usr/lib -l" .. pkg_name
+
+	return function()
+		return { cflags, ldflags }
+	end
+end
 
 function shell_cmd(target, source, cmd, parameters)
 	local t = target
