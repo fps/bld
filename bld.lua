@@ -69,8 +69,8 @@ function pkg(name, version, rules)
 	
 	return function()
 		print("-- project: ", name, " version: ", version)
-		for i,j in pairs(rules) do
-			j()
+		for target,build in pairs(rules) do
+		build()
 		end
 	end
 end
