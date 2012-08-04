@@ -56,7 +56,7 @@ function exists(n)
 	if f then
 		io.close(f)
 	end
-	return f == nil
+	return f ~= nil
 end
 
 function file(target, source)
