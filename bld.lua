@@ -1,4 +1,5 @@
 require "dumper"
+require "pkg_config"
 
 function lift(x)
 	local v = x
@@ -71,15 +72,6 @@ function file(target, source)
 	end
 end
 
-function pkg_config(pkg_name)
-	local cflags = "-I /usr"
-	local ldflags = "-L /usr/lib -l" .. pkg_name
-
-	return function()
-		return { cflags, ldflags }
-	end
-end
-
 function cc(target, source, parameters)
 	local t = target
 	local s = source
@@ -89,7 +81,7 @@ function cc(target, source, parameters)
 		print(cmd)
 		os.execute(cmd)
 	end
-	return rule(t, s, f, { }, file(t, s))
+	return rule(t, s, f, p, file(t, s))
 end
 
 function exe(target, source, parameters)

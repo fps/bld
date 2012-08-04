@@ -1,6 +1,8 @@
 require "bld"
 
 configure = function() 
+	local pkg_config_packages = pkg_config( { { name = "jack" } } )
+
 	local compiler = cc("foo.o", "foo.c", {})	
 
 	local foo1 = shell_cmd("foo1", compiler, "echo", {})

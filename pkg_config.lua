@@ -5,8 +5,8 @@ function capture_cmd_output(cmd)
 	os.execute(cmd .. " > " .. tmp)
 	
 	-- print("reading output")
-	file = io.input(tmp)
-	result = io.read("*all")
+	local file = io.input(tmp)
+	local result = io.read("*all")
 
 	io.close(file)
 
@@ -32,17 +32,20 @@ end
 -- min_version: minimum version
 -- max_version: maximum version
 function pkg_config(packages)
-	cflags_out = "" 
-	ldflags_out = ""
+	local cflags_out = "" 
+	local ldflags_out = ""
+	local aflags_out = ""
 
 	for key, pkg in pairs(packages) do
 		local cflags = remove_newlines(capture_cmd_output("pkg-config --cflags " .. pkg.name))
 		local ldflags = remove_newlines(capture_cmd_output("pkg-config --libs " .. pkg.name))
+		local aflags = remove_newlines(capture_cmd_output("pkg-config --static " .. pkg.name))
 
 		cflags_out = cflags_out .. " " .. cflags
 		ldflags_out = ldflags_out .. " " .. ldflags
+		aflags_out = aflags_out .. " " .. aflags
 
-		print("pkg_config: ", pkg.name, " cflags: ", "\"".. cflags .. "\"", " ldflags: ", "\"" .. ldflags .. "\"")
+		print("pkg_config: ", pkg.name, " cflags: ", "\"".. cflags .. "\"", " ldflags: ", "\"" .. ldflags .. "\"", " static: " .. "\"" .. aflags .. "\"")
 	end
 
 	return { cflags = cflags_out, ldflags = ldflags_out }
