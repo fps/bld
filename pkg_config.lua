@@ -26,7 +26,7 @@ end
 --
 -- name: package name
 -- 
--- optional:
+-- optional (TODO: implement):
 --
 -- version: precise version
 -- min_version: minimum version

@@ -1,5 +1,4 @@
 require "dumper"
-require "pkg_config"
 
 function lift(x)
 	local v = x
@@ -25,7 +24,7 @@ function valeval(v)
         end
 end
 
-function rule_closure(target, source, transformation, parameters, check)
+function rule_closure(source, transformation, parameters, check)
 	if not (nil == check) then 
 		--  print ("-- check!")
 		if check(valeval(target), valeval(source)) == true  then
@@ -34,21 +33,21 @@ function rule_closure(target, source, transformation, parameters, check)
 		end
 	end
 
-	print ("-- building: ", valeval(target), "from: ", valeval(source))
-        return transformation(valeval(target), valeval(source), valeval(parameters))
+	print ("-- transforming: ", valeval(source))
+        return transformation(valeval(source), valeval(parameters))
 end
 
-function rule(target, sources, transformation, parameters, check)
+function rule(sources, transformation, parameters, check)
 	print("-- adding rule") 
 
-	local t = target
+	
 	local s = sources
 	local tr = transformation
 	local p = parameters
 	local c = check
 
         return function()
-                        return rule_closure(t, s, tr, p, c)
+                        return rule_closure(s, tr, p, c)
         end
 end
 
@@ -60,32 +59,17 @@ function exists(n)
 	return f ~= nil
 end
 
-function file(target, source)
-	local t = target
-	return function(target) 
-		if exists(valeval(target)) then
+function file_check(source)
+	local s = source
+	
+	return function(source) 
+		if exists(valeval(s)) then
 			return true
 		end
 
 		print ("-- -- build")
 		return false
 	end
-end
-
-function cc(target, source, parameters)
-	local t = target
-	local s = source
-	local p = parameters
-	local f = function(target, source, parameters)
-		local cmd = "g++ -o " .. valeval(t) .. " -c " .. valeval(s)
-		print(cmd)
-		os.execute(cmd)
-	end
-	return rule(t, s, f, p, file(t, s))
-end
-
-function exe(target, source, parameters)
-
 end
 
 function shell_cmd(target, source, cmd, parameters)
@@ -97,7 +81,7 @@ function shell_cmd(target, source, cmd, parameters)
 		print("-- running: ", cmd)
 		os.execute(c) 
 	end
-        return rule(t, s, f, {  }, file(t,s))
+        return rule(s, f, {  }, file_check(t))
 end
 
 function pkg(name, version, rules)
