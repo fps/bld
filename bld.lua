@@ -24,31 +24,37 @@ function valeval(v)
         end
 end
 
-function rule_closure(source, transformation, parameters, check)
+function rule_closure(dependency, transformation, parameters, check)
 	if not (nil == check) then 
 		--  print ("-- check!")
-		if check(valeval(target), valeval(source)) == true  then
+		if check(valeval(target), valeval(dependency)) == true  then
 			print ("-- done")
 			return 
 		end
 	end
 
-	print ("-- transforming: ", valeval(source))
-        return transformation(valeval(source), valeval(parameters))
+	print ("-- transforming: ", valeval(dependency))
+        return transformation(valeval(dependency), valeval(parameters))
 end
 
-function rule(sources, transformation, parameters, check)
+function rule(dependency, transformation, parameters, check)
 	print("-- adding rule") 
 
 	
-	local s = sources
+	local d = dependency
 	local tr = transformation
 	local p = parameters
 	local c = check
 
         return function()
-                        return rule_closure(s, tr, p, c)
+                        return rule_closure(d, tr, p, c)
         end
+end
+
+function rules(dependencies, transformation, parameters, check)
+	for key, value in ipairs(dependencies) do
+
+	end
 end
 
 function exists(n)
@@ -59,10 +65,10 @@ function exists(n)
 	return f ~= nil
 end
 
-function file_check(source)
-	local s = source
+function file_check(dependency)
+	local s = dependency
 	
-	return function(source) 
+	return function(dependency) 
 		if exists(valeval(s)) then
 			return true
 		end
@@ -72,9 +78,9 @@ function file_check(source)
 	end
 end
 
-function shell_cmd(target, source, cmd, parameters)
+function shell_cmd(target, dependency, cmd, parameters)
 	local t = target
-	local s = source
+	local s = dependency
 	local c = cmd
 	local p = parameters
 	local f = function() 
@@ -91,7 +97,7 @@ function pkg(name, version, rules)
 	return function()
 		print("-- project: ", name, " version: ", version)
 		for target,build in pairs(rules) do
-		build()
+			build()
 		end
 	end
 end
