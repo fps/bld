@@ -3,12 +3,12 @@ require "cpp_compiler"
 require "pkg_config"
 
 configure = function() 
-	local packages = pkg_config( { { name = "jack" } } )
+	local packages = pkg_config( { { name = "jack" }, { name = "sndfile" } } )
 
 	local compiler = cpp_compiler(packages)
 
-	local foo1 = compiler.compile("foo.cc", { }) 
-	-- local foo2 = shell_cmd("", "bar1", "echo", {})
+	local foo = compiler.compile("foo.cc") 
+	local foolib = compiler.shared_library(foo)
 
 	return pkg("foo", "0.1", { foo1 }) 
 end

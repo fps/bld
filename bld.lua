@@ -24,37 +24,34 @@ function valeval(v)
         end
 end
 
-function rule_closure(dependency, transformation, parameters, check)
-	if not (nil == check) then 
-		--  print ("-- check!")
-		if check(valeval(target), valeval(dependency)) == true  then
-			print ("-- done")
-			return 
-		end
-	end
-
+function rule_closure(dependency, transformation)
 	print ("-- transforming: ", valeval(dependency))
         return transformation(valeval(dependency), valeval(parameters))
 end
 
-function rule(dependency, transformation, parameters, check)
+function rule(dependency, transformation)
 	print("-- adding rule") 
 
 	
 	local d = dependency
 	local tr = transformation
-	local p = parameters
-	local c = check
 
         return function()
-                        return rule_closure(d, tr, p, c)
+                        return rule_closure(d, tr)
         end
 end
 
-function rules(dependencies, transformation, parameters, check)
-	for key, value in ipairs(dependencies) do
+function rules(dependencies, transformation)
+	local d = dependencies
+	local t = transformation
 
+	local f = function(dep, trans)
+		for key, value in pairs(dependencies) do
+			t(value)
+		end
 	end
+
+	return rule(f, d)
 end
 
 function exists(n)
@@ -78,16 +75,15 @@ function file_check(dependency)
 	end
 end
 
-function shell_cmd(target, dependency, cmd, parameters)
-	local t = target
+function shell_cmd(dependency, cmd, check)
 	local s = dependency
 	local c = cmd
-	local p = parameters
+
 	local f = function() 
 		print("-- running: ", cmd)
 		os.execute(c) 
 	end
-        return rule(s, f, {  }, file_check(t))
+        return rule(s, f)
 end
 
 function pkg(name, version, rules)
