@@ -7,10 +7,10 @@ configure = function()
 
 	local compiler = cpp_compiler(packages)
 
-	local foo = compiler.compile("foo.cc") 
-	local foolib = compiler.shared_library("foo", foo)
+	local foo = compiler.compile({}, "foo.cc") 
+	local foolib = compiler.shared_library(foo, "foo", "foo.o")
 
-	return pkg("foo", "0.1", { foo1 }) 
+	return pkg("foo", "0.1", { foolib }) 
 end
 
 bld(arg, configure)

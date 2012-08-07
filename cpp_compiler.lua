@@ -2,15 +2,21 @@
 function cpp_compiler(packages)
 	local compiler = { }
 
-	compiler.compile = function(source) 
-		return function() 
-			shell_cmd(source, "g++ -c " .. packages.cflags .. " " .. valeval(source))()
-			return "foo.o"
+	local p = packages
+
+	compiler.compile = function(dependencies, source) 
+		print(p.cflags)
+
+		function f()
+			local cmd = "g++ -c " .. p.cflags .. " " .. source
+			print(cmd)
+			os.execute(cmd)
 		end
+		return rule(dependencies, f)
 	end
 
-	compiler.shared_library = function(name , sources)
-		return shell_cmd(source, "g++ -shared -fPIC -o" .. name)
+	compiler.shared_library = function(dependencies, basename, sources)
+		return shell_cmd(dependencies, "g++ -shared -fPIC -o lib" .. name .. ".so" .. p.ldflags)
 	end
 
 	return compiler

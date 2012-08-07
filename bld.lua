@@ -24,34 +24,23 @@ function valeval(v)
         end
 end
 
-function rule_closure(dependency, transformation)
-	print ("-- transforming: ", valeval(dependency))
-        return transformation(valeval(dependency), valeval(parameters))
-end
-
-function rule(dependency, transformation)
+function rule(dependencies, transformation)
 	print("-- adding rule") 
 
 	
-	local d = dependency
+	local d = dependencies
 	local tr = transformation
 
         return function()
-                        return rule_closure(d, tr)
+			if type(d) == "table" then
+				for i,j in pairs(d) do
+					valeval(j)
+				end
+			else 
+				valeval(d)
+			end
+                        tr()
         end
-end
-
-function rules(dependencies, transformation)
-	local d = dependencies
-	local t = transformation
-
-	local f = function(dep, trans)
-		for key, value in pairs(dependencies) do
-			t(value)
-		end
-	end
-
-	return rule(f, d)
 end
 
 function exists(n)
@@ -83,7 +72,7 @@ function shell_cmd(dependency, cmd, check)
 		print("-- running: ", cmd)
 		os.execute(c) 
 	end
-        return rule(s, f)
+        return rule(d, f)
 end
 
 function pkg(name, version, rules)
