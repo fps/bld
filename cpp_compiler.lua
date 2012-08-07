@@ -3,12 +3,14 @@ function cpp_compiler(packages)
 	local compiler = { }
 
 	compiler.compile = function(source) 
-		return shell_cmd(source, "g++ -c " .. packages.cflags .. " " .. valeval(source))
+		return function() 
+			shell_cmd(source, "g++ -c " .. packages.cflags .. " " .. valeval(source))()
+			return "foo.o"
+		end
 	end
 
 	compiler.shared_library = function(name , sources)
-		
-		return shell_cmd(source, "g++ -shared -fPIC -o" .. name .. )
+		return shell_cmd(source, "g++ -shared -fPIC -o" .. name)
 	end
 
 	return compiler

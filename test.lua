@@ -8,7 +8,7 @@ configure = function()
 	local compiler = cpp_compiler(packages)
 
 	local foo = compiler.compile("foo.cc") 
-	local foolib = compiler.shared_library(foo)
+	local foolib = compiler.shared_library("foo", foo)
 
 	return pkg("foo", "0.1", { foo1 }) 
 end
