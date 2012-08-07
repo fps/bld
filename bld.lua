@@ -64,8 +64,8 @@ function file_check(dependency)
 	end
 end
 
-function shell_cmd(dependency, cmd, check)
-	local d = dependency
+function shell_cmd(dependencies, cmd)
+	local d = dependencies
 	local c = cmd
 
 	local f = function() 
@@ -78,10 +78,11 @@ end
 function pkg(name, version, rules)
 	local n = name
 	local v = version
+	local r = rules
 	
 	return function()
 		print("-- project: ", name, " version: ", version)
-		for target,build in pairs(rules) do
+		for target,build in pairs(r) do
 			build()
 		end
 	end

@@ -24,7 +24,7 @@ function pkg_config(packages)
 		ldflags_out = ldflags_out .. " " .. ldflags
 		aflags_out = aflags_out .. " " .. aflags
 
-		print("pkg_config: ", pkg.name, " cflags: ", "\"".. cflags .. "\"", " ldflags: ", "\"" .. ldflags .. "\"", " static: " .. "\"" .. aflags .. "\"")
+		print("pkg_config: ", pkg.name, "\n  cflags: ", "\"".. cflags .. "\"", "\n  ldflags: ", "\"" .. ldflags .. "\"", "\n  static: " .. "\"" .. aflags .. "\"")
 	end
 
 	return { cflags = cflags_out, ldflags = ldflags_out, aflags = aflags_out }
