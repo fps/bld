@@ -76,7 +76,7 @@ function file_check(dependency)
 end
 
 function shell_cmd(dependency, cmd, check)
-	local s = dependency
+	local d = dependency
 	local c = cmd
 
 	local f = function() 
