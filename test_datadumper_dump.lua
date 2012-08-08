@@ -3,7 +3,7 @@ require "dumper"
 local x = "foobar"
 
 local f = function() 
-	print("foo", x)
+	print("foo and x is: ", x)
 end
 
 t = { f, f }
